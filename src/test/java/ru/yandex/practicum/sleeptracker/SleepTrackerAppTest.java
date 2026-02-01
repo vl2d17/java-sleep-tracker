@@ -78,16 +78,16 @@ public class SleepTrackerAppTest {
     void testParseLine_SleepCrossesMidnight_AdjustsEndDate() {
 
         SleepTrackerApp app = new SleepTrackerApp();
-        String line = "01.01.24 22:00;01.01.24 06:00;GOOD"; // end раньше start
+        String line = "01.01.24 22:00;01.01.24 06:00;GOOD";
 
-        // Действие
+
         var result = app.parseLine(line);
 
 
         assertTrue(result.isPresent());
         SleepingSession session = result.get();
         assertEquals(LocalDateTime.of(2024, 1, 1, 22, 0), session.getStart());
-        assertEquals(LocalDateTime.of(2024, 1, 2, 6, 0), session.getEnd()); // +1 день
+        assertEquals(LocalDateTime.of(2024, 1, 2, 6, 0), session.getEnd());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class SleepTrackerAppTest {
         assertNotNull(results);
         assertFalse(results.isEmpty());
 
-        assertEquals(3, results.size(), "Должно быть 3 результата от 3 аналитических функций");
+        assertEquals(6, results.size(), "Должно быть 6 результатов от всех аналитических функций");
 
     }
 
@@ -131,7 +131,7 @@ public class SleepTrackerAppTest {
         assertNotNull(results);
 
 
-        assertEquals(3, results.size(), "Должно быть 3 результата от всех аналитических функций");
+        assertEquals(6, results.size(), "Должно быть 6 результатов от всех аналитических функций");
 
 
         SleepAnalysisResult sessionCountResult = results.stream()

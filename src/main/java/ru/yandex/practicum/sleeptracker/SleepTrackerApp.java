@@ -1,8 +1,6 @@
 package ru.yandex.practicum.sleeptracker;
 
-import ru.yandex.practicum.sleeptracker.Function.ChronotypeAnalyzer;
-import ru.yandex.practicum.sleeptracker.Function.SleepingSessionCounter;
-import ru.yandex.practicum.sleeptracker.Function.SleeplessNightCounter;
+import ru.yandex.practicum.sleeptracker.Function.*;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -15,23 +13,37 @@ import java.util.function.Function;
 
 public class SleepTrackerApp {
 
-    private static final String SESSIONS_FILE_NAME =
-            "D:/JAVA/TZPractYa/java-TZ/src/TZ8/src/main/resources/sleep_log.txt";
     public static final String SEPARATOR = ";";
     private static final DateTimeFormatter LOG_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     private final List<Function<List<SleepingSession>, SleepAnalysisResult>> analyticFunctions = List.of(
             new SleepingSessionCounter(),
+            new MinSleepDurationAnalyzer(),
+            new MaxSleepDurationAnalyzer(),
+            new AvgSleepDurationAnalyzer(),
             new SleeplessNightCounter(),
             new ChronotypeAnalyzer()
     );
 
     public static void main(String[] args) {
+        if (args.length < 1) {
+            System.out.println("Укажите путь к файлу с логом сна.");
+            System.out.println("Использование: java SleepTrackerApp <путь к файлу>");
+            System.out.println("Пример: java SleepTrackerApp sleep_log.txt");
+            return;
+        }
+        String filePath = args[0];
         SleepTrackerApp app = new SleepTrackerApp();
+
         try {
-            List<SleepingSession> sessions = app.readFile(app.getFile(SESSIONS_FILE_NAME));
+            System.out.println("Загрузка файла: " + filePath);
+            List<SleepingSession> sessions = app.readFile(app.getFile(filePath));
+            System.out.println("Загружено сессий сна: " + sessions.size());
+
+            System.out.println("\nРезультаты анализа:");
             List<SleepAnalysisResult> results = app.analyzeSessions(sessions);
+
 
             for (SleepAnalysisResult result : results) {
                 if (result.getChronoType() != null) {
@@ -41,6 +53,8 @@ public class SleepTrackerApp {
                 }
             }
 
+        } catch (FileNotFoundException e) {
+            System.out.println("Ошибка: Файл не найден - " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Ошибка при чтении файла: " + e.getMessage());
         }
@@ -59,7 +73,7 @@ public class SleepTrackerApp {
         }
 
         if (!file.isFile()) {
-            throw new FileNotFoundException("Указанный пусть не является файлом: " + filename);
+            throw new FileNotFoundException("Указанный путь не является файлом: " + filename);
         }
 
         if (!file.canRead()) {

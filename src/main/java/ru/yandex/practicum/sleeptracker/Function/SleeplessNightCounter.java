@@ -7,10 +7,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 public class SleeplessNightCounter implements Function<List<SleepingSession>, SleepAnalysisResult> {
 
@@ -51,32 +53,31 @@ public class SleeplessNightCounter implements Function<List<SleepingSession>, Sl
     }
 
     private Set<LocalDate> findNightWithSleep(List<SleepingSession> sessions) {
-        Set<LocalDate> nightsWithSleep = new HashSet<>();
-
-        for (SleepingSession session : sessions) {
-            LocalDateTime sessionStart = session.getStart();
-            LocalDateTime sessionEnd = session.getEnd();
-
-            LocalDate currentDate = sessionStart.toLocalDate();
-
-            LocalDate endDate = sessionEnd.toLocalDate();
-
-            while (!currentDate.isAfter(endDate)) {
-                LocalDateTime nightStart = currentDate.atStartOfDay();
-                LocalDateTime nightEnd = currentDate.atTime(6, 0);
-
-                if (intersects(sessionStart, sessionEnd, nightStart, nightEnd)) {
-                    nightsWithSleep.add(currentDate.minusDays(1));
-                }
-
-                currentDate = currentDate.plusDays(1);
-            }
-        }
-        return nightsWithSleep;
+        return sessions.stream()
+                .flatMap(this::getNightFromSession)
+                .collect(Collectors.toSet());
     }
 
-    private boolean intersects(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2,
-                               LocalDateTime end2) {
+    private Stream<LocalDate> getNightFromSession(SleepingSession session) {
+        LocalDateTime sessionStart = session.getStart();
+        LocalDateTime sessionEnd = session.getEnd();
+
+        LocalDate startDate = sessionStart.toLocalDate();
+        LocalDate endDate = sessionEnd.toLocalDate();
+
+        return Stream.iterate(startDate, date -> !date.isAfter(endDate), date -> date.plusDays(1))
+                .filter(date -> isNightSession(sessionStart, sessionEnd, date))
+                .map(date -> date.minusDays(1));
+    }
+
+    private boolean isNightSession(LocalDateTime sessionStart, LocalDateTime sessionEnd, LocalDate date) {
+        LocalDateTime nightStart = date.atStartOfDay();
+        LocalDateTime nightEnd = date.atTime(6, 0);
+
+        return intersects(sessionStart, sessionEnd, nightStart, nightEnd);
+    }
+
+    private boolean intersects(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
         return !start1.isAfter(end2) && !end1.isBefore(start2);
     }
 }

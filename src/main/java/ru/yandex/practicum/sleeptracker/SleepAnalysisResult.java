@@ -25,12 +25,27 @@ public class SleepAnalysisResult {
         return functionTitle + ": " + result;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
     public Integer getValue() {
-        return (Integer) result;
+        if (result == null) {
+            return 0;
+        }
+
+        if (result instanceof Integer) {
+            return (Integer) result;
+        }
+
+        if (result instanceof Long) {
+
+            long longValue = (Long) result;
+            return (int) longValue;
+        }
+
+        if (result instanceof Number) {
+
+            return ((Number) result).intValue();
+        }
+
+        return null;
     }
 
     public Chronotype getChronoType() {
@@ -38,6 +53,10 @@ public class SleepAnalysisResult {
             return (Chronotype) result;
         }
         return null;
+    }
+
+    public String getTitle() {
+        return functionTitle;
     }
 }
 

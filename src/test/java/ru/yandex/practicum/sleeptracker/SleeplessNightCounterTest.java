@@ -39,7 +39,7 @@ public class SleeplessNightCounterTest {
 
     @Test
     void testApply_MultipleSessionsWithGaps_ReturnsCorrectCount() {
-        // Подготовка: несколько сессий с пропусками ночей
+
         SleeplessNightCounter counter = new SleeplessNightCounter();
 
         List<SleepingSession> sessions = List.of(
@@ -49,7 +49,7 @@ public class SleeplessNightCounterTest {
                         SleepQuality.GOOD
                 ),
                 new SleepingSession(
-                        LocalDateTime.of(2024, 1, 2, 14, 0), // изменено на дневной
+                        LocalDateTime.of(2024, 1, 2, 14, 0),
                         LocalDateTime.of(2024, 1, 2, 15, 0),
                         SleepQuality.NORMAL
                 ),
@@ -71,7 +71,7 @@ public class SleeplessNightCounterTest {
         List<SleepingSession> sessions = List.of(
                 new SleepingSession(
                         LocalDateTime.of(2024, 1, 1, 23, 30),
-                        LocalDateTime.of(2024, 1, 2, 0, 30), // пересекает полночь
+                        LocalDateTime.of(2024, 1, 2, 0, 30),
                         SleepQuality.GOOD
                 )
         );
