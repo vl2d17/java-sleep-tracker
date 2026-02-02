@@ -46,13 +46,16 @@ public class SleepTrackerApp {
             List<SleepAnalysisResult> results = app.analyzeSessions(sessions);
 
 
-            for (SleepAnalysisResult result : results) {
-                if (result.getChronoType() != null) {
-                    System.out.println(result.getTitle() + ": " + result.getChronoType().getDisplayName());
-                } else {
-                    System.out.println(result);
-                }
-            }
+            results.stream()
+                    .forEach(result -> {
+                        if (result.getChronoType() != null) {
+                            System.out.println(result.getTitle() + ": " + result.getChronoType()
+                                    .getDisplayName());
+                        } else {
+                            System.out.println(result);
+                        }
+                    });
+
 
         } catch (FileNotFoundException e) {
             System.out.println("Ошибка: Файл не найден - " + e.getMessage());
