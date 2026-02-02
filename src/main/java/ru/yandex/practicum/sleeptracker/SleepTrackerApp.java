@@ -19,6 +19,7 @@ public class SleepTrackerApp {
 
     private final List<Function<List<SleepingSession>, SleepAnalysisResult>> analyticFunctions = List.of(
             new SleepingSessionCounter(),
+            new BadQualitySleepCounter(),
             new MinSleepDurationAnalyzer(),
             new MaxSleepDurationAnalyzer(),
             new AvgSleepDurationAnalyzer(),

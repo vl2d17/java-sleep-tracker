@@ -114,7 +114,7 @@ public class SleepTrackerAppTest {
         assertNotNull(results);
         assertFalse(results.isEmpty());
 
-        assertEquals(6, results.size(), "Должно быть 6 результатов от всех аналитических функций");
+        assertEquals(7, results.size(), "Должно быть 7 результатов от всех аналитических функций");
 
     }
 
@@ -131,7 +131,7 @@ public class SleepTrackerAppTest {
         assertNotNull(results);
 
 
-        assertEquals(6, results.size(), "Должно быть 6 результатов от всех аналитических функций");
+        assertEquals(7, results.size(), "Должно быть 7 результатов от всех аналитических функций");
 
 
         SleepAnalysisResult sessionCountResult = results.stream()
